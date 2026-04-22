@@ -39,6 +39,9 @@ export function useImagePreloader({
         loadedCount++;
         if (isMounted) {
           setLoaded(loadedCount);
+          if (loadedCount === frameCount) {
+            setImages(loadedImages);
+          }
         }
       };
       
@@ -47,12 +50,13 @@ export function useImagePreloader({
         loadedCount++;
         if (isMounted) {
           setLoaded(loadedCount);
+          if (loadedCount === frameCount) {
+            setImages(loadedImages);
+          }
         }
       }
       loadedImages.push(img);
     }
-
-    setImages(loadedImages);
 
     return () => {
       isMounted = false;

@@ -10,7 +10,7 @@ export default function PlaneMorph() {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
-  const { images, progress } = useImagePreloader({
+  const { images, isLoaded } = useImagePreloader({
     frameCount: FRAME_COUNT,
     sequencePath: "/sequence-2",
     startIndex: 1,
@@ -26,7 +26,7 @@ export default function PlaneMorph() {
   const frameIndex = useTransform(scrollYProgress, [0, 1], [0, FRAME_COUNT - 1]);
 
   useEffect(() => {
-    if (images.length === 0) return;
+    if (!isLoaded || images.length === 0) return;
 
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -41,7 +41,7 @@ export default function PlaneMorph() {
 
     const render = (index: number) => {
       const img = images[Math.round(index)];
-      if (!img || !img.complete || img.naturalHeight === 0) return;
+      if (!img) return;
 
       const hRatio = rect.width / img.width;
       const vRatio = rect.height / img.height;
@@ -82,7 +82,7 @@ export default function PlaneMorph() {
       unsubscribe();
       window.removeEventListener("resize", handleResize);
     };
-  }, [images, frameIndex, progress]);
+  }, [isLoaded, images, frameIndex]);
 
   return (
     <div ref={containerRef} className="relative h-[400vh] bg-black">

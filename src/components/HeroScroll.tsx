@@ -28,7 +28,7 @@ export default function HeroScroll() {
   const frameIndex = useTransform(scrollYProgress, [0, 1], [0, FRAME_COUNT - 1]);
 
   useEffect(() => {
-    if (!isLoaded || images.length === 0) return;
+    if (images.length === 0) return;
 
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -44,7 +44,7 @@ export default function HeroScroll() {
 
     const render = (index: number) => {
       const img = images[Math.round(index)];
-      if (!img) return;
+      if (!img || !img.complete || img.naturalHeight === 0) return;
 
       // Draw image covering the canvas (like object-fit: cover)
       const hRatio = rect.width / img.width;
@@ -89,16 +89,11 @@ export default function HeroScroll() {
       unsubscribe();
       window.removeEventListener("resize", handleResize);
     };
-  }, [isLoaded, images, frameIndex]);
+  }, [images, frameIndex, progress]);
 
   return (
     <div ref={containerRef} className="relative h-[400vh] bg-black">
       <div className="sticky top-0 h-screen w-full overflow-hidden">
-        {!isLoaded && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black z-10 text-white font-sans text-sm tracking-widest uppercase">
-            Loading Sequence {Math.round(progress * 100)}%
-          </div>
-        )}
         <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
         
         {/* Overlay content */}
